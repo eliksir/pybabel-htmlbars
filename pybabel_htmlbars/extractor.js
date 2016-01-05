@@ -113,6 +113,7 @@ module.exports = {
         var param;
         var param_singular;
         var param_plural;
+        var param_context;
 
         // Singular strings
         if (node.path.original === '_') {
@@ -141,6 +142,22 @@ module.exports = {
                     content: param_singular.value,
                     alt_content: param_plural.value,
                     funcname: 'ngettext',
+                });
+            }
+        }
+
+        // With context
+        else if (node.path.original === 'p_') {
+            param_context = node.params[0];
+            param = node.params[1];
+
+            if (param_context && param_context.type === 'StringLiteral' &&
+                param && param.type === 'StringLiteral') {
+                this.output.push({
+                    line_number: node.loc.start.line,
+                    content: param_context.value,
+                    alt_content: param.value,
+                    funcname: 'pgettext',
                 });
             }
         }
